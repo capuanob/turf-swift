@@ -1,0 +1,8 @@
+project: turf-swift
+target: fuzz-turf-swift
+testsuite:
+    - file://mayhem/testsuite
+
+cmds:
+  - cmd: /release/TurfFuzz
+    libfuzzer: true
