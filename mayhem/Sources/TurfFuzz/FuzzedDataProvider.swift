@@ -58,6 +58,38 @@ class FuzzedDataProvider {
         return min + T(result)
     }
 
+    func ConsumeDoubleInRange(min: Double, max: Double) -> Double {
+        if (min > max) {
+            abort()
+        }
+
+        var range = 0.0;
+        var result = min;
+        let zero = 0.0;
+
+        if max > zero && min < zero && max > min + Double.greatestFiniteMagnitude {
+            range = (max / 2.0) - (min / 2.0)
+            if ConsumeBoolean() {
+                result += range
+            }
+        }
+        else {
+            range = max - min
+        }
+
+        return result + range * ConsumeProbability() as Double
+    }
+
+    func ConsumeDouble() -> Double {
+        return ConsumeDoubleInRange(min: -Double.greatestFiniteMagnitude, max: Double.greatestFiniteMagnitude)
+    }
+
+    func ConsumeProbability<T: FloatingPoint>() -> T {
+        var result: T = T(ConsumeIntegral() as UInt64)
+        result /= T(UInt64.self.max)
+        return result
+    }
+
     func ConsumeIntegral<T: FixedWidthInteger & UnsignedInteger>() -> T {
         // Get the unsigned version of the type
         return ConsumeIntegralInRange(from: T.min, to: T.max)
